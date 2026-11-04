@@ -1,0 +1,14 @@
+# Dataset original de OPSD (58 MB): se descarga desde la fuente
+household_data_15min_singleindex.csv
+
+# Python / Jupyter
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.venv/
+venv/
+
+# Secretos y sistema
+.env
+.DS_Store
+Thumbs.db
