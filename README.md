@@ -19,14 +19,14 @@ Materias que cubre: Machine Learning e Inferencia Bayesiana, Matemáticas Aplica
 
 | Fuente | Qué se usa | Dónde |
 |---|---|---|
-| [Open Power System Data, Household Data (v2020-04-15)](https://data.open-power-system-data.org/household_data/2020-04-15/) | Vivienda `DE_KN_residential4` (Konstanz, Alemania): `grid_import`, `grid_export`, `pv`, `heat_pump`, `ev`. Lecturas acumuladas de medidor (kWh) cada 15 min | **No se incluye** (58 MB). Descargar `household_data_15min_singleindex.csv` y ponerlo en `codigo/` |
-| [CENACE, SIM](https://www.cenace.gob.mx/) | PML del Mercado del Día en Adelanto, promedios horarios por sistema (SIN, BCA, BCS), **un solo día** (22 oct 2026) | `codigo/PMLHorarioMDA.csv` |
+| [Open Power System Data, Household Data (v2020-04-15)](https://data.open-power-system-data.org/household_data/2020-04-15/) | Vivienda `DE_KN_residential4` (Konstanz, Alemania): `grid_import`, `grid_export`, `pv`, `heat_pump`, `ev`. Lecturas acumuladas de medidor (kWh) cada 15 min | **No se incluye** (58 MB). Descargar `household_data_15min_singleindex.csv` desde el enlace y ponerlo en `codigo/` |
+| [CENACE, SIM](https://www.cenace.gob.mx/) | PML del Mercado del Día en Adelanto, promedios horarios por sistema (SIN, BCA, BCS), **un solo día** (22 oct 2026) | [`codigo/PMLHorarioMDA.csv`](codigo/PMLHorarioMDA.csv) |
 
 Pecan Street Dataport se consideró al inicio y se descartó por falta de acceso.
 
 Tras la limpieza quedan **506 días completos** (14 oct 2015 a 5 mar 2017), 12,144 horas y 48,576 lecturas de 15 min. Se descartaron 5 días: 3 por cambio de horario y 2 parciales en los extremos de la ventana.
 
-## Estructura
+## Estructura del repositorio
 
 ```
 .
@@ -34,42 +34,67 @@ Tras la limpieza quedan **506 días completos** (14 oct 2015 a 5 mar 2017), 12,1
 ├── requirements.txt
 ├── .gitignore
 ├── codigo/
-│   ├── 00_ingesta_limpieza.ipynb
-│   ├── 01_bases_de_datos.ipynb
+│   ├── 00_ingesta_limpieza_codigo.ipynb
+│   ├── 01_Bases_de_datos_Código.ipynb          (versión para Google Colab)
 │   ├── 02_ml_clasificacion_ev.ipynb
-│   ├── 04_optimizador_lp.ipynb
-│   ├── 06_inferencia_estadistica.ipynb
-│   ├── esquema_powershift.sql
-│   ├── consultas_powershift.sql
-│   ├── PMLHorarioMDA.csv            (entrada)
-│   └── ... CSV, JSON y figuras generados por los notebooks
+│   ├── 04_Optimizador_lp_codigo.ipynb
+│   ├── 06_inferencia_estadistica_codigo.ipynb
+│   ├── PMLHorarioMDA.csv                        (entrada, CENACE)
+│   ├── Notebook 00/                             (salidas de referencia del notebook 00)
+│   │   ├── datos_horarios.csv
+│   │   ├── pml_perfil.csv
+│   │   ├── telemetria_15min.csv
+│   │   └── fig_pml_perfil.pdf
+│   ├── Notebook 04/                             (salidas de referencia del notebook 04)
+│   │   ├── costos_diarios.csv
+│   │   ├── costos_ventana_aprendida.csv
+│   │   ├── programacion.csv
+│   │   ├── resultados_optimizador.json
+│   │   ├── fig_asignacion_ev.(pdf/png)
+│   │   ├── fig_asignacion_ventana.(pdf/png)
+│   │   └── datos_horarios.csv · pml_perfil.csv  (copias de las entradas)
+│   └── SQL/
+│       ├── esquema_powershift.sql
+│       └── consultas_powershift.sql
 └── reportes/
-    ├── machine_learning_matematicas/
-    ├── estadistica/
-    └── bases_de_datos/
+    └── los tres reportes en PDF (ver sección "Reportes")
 ```
 
 La numeración de los notebooks sigue el plan original del proyecto; los números 03 y 05 no se utilizaron.
 
+Las carpetas `Notebook 00/` y `Notebook 04/` guardan una copia de los archivos que generó una ejecución de esos notebooks, para poder consultarlos sin volver a correr nada. Los notebooks, al ejecutarse, leen y escriben archivos en **su propia carpeta** (`codigo/`).
+
 ## Cómo reproducirlo
 
-Requiere Python 3.10 o superior: `pip install -r requirements.txt`. Los notebooks leen y escriben archivos en su misma carpeta (`codigo/`). Se pueden correr en Jupyter o en Google Colab (*Reiniciar y ejecutar todo*).
+Requiere Python 3.10 o superior: `pip install -r requirements.txt`. Se puede correr en Jupyter o en Google Colab (*Reiniciar y ejecutar todo*). Antes de empezar, poner `household_data_15min_singleindex.csv` en la misma carpeta que los notebooks; `PMLHorarioMDA.csv` ya está en `codigo/`.
 
 | Orden | Notebook | Lee | Genera |
 |---|---|---|---|
-| 1 | `00_ingesta_limpieza` | `household_data_15min_singleindex.csv`, `PMLHorarioMDA.csv` | `datos_horarios.csv`, `pml_perfil.csv`, `telemetria_15min.csv` |
-| 2 | `04_optimizador_lp` | `datos_horarios.csv`, `pml_perfil.csv` | `costos_diarios.csv`, `programacion.csv`, `costos_ventana_aprendida.csv`, `resultados_optimizador.json` |
-| 3 | `02_ml_clasificacion_ev` | `datos_horarios.csv` | `resultados_ml.json` y figuras |
-| 4 | `06_inferencia_estadistica` | `datos_horarios.csv`, `costos_diarios.csv` | pruebas de hipótesis y figuras |
-| 5 | `01_bases_de_datos` | `esquema_powershift.sql`, `telemetria_15min.csv`, `programacion.csv`, `costos_diarios.csv`, `PMLHorarioMDA.csv` | esquema y consultas en PostgreSQL con TimescaleDB |
+| 1 | [`00_ingesta_limpieza_codigo`](codigo/00_ingesta_limpieza_codigo.ipynb) | `household_data_15min_singleindex.csv`, `PMLHorarioMDA.csv` | `datos_horarios.csv`, `pml_perfil.csv`, `telemetria_15min.csv` |
+| 2 | [`04_Optimizador_lp_codigo`](codigo/04_Optimizador_lp_codigo.ipynb) | `datos_horarios.csv`, `pml_perfil.csv` | `costos_diarios.csv`, `programacion.csv`, `costos_ventana_aprendida.csv`, `resultados_optimizador.json` y figuras |
+| 3 | [`02_ml_clasificacion_ev`](codigo/02_ml_clasificacion_ev.ipynb) | `datos_horarios.csv` | `resultados_ml.json` y figuras (se generan al ejecutarlo) |
+| 4 | [`06_inferencia_estadistica_codigo`](codigo/06_inferencia_estadistica_codigo.ipynb) | `datos_horarios.csv`, `costos_diarios.csv` | pruebas de hipótesis y figuras (se generan al ejecutarlo) |
+| 5 | [`01_Bases_de_datos_Código`](codigo/01_Bases_de_datos_C%C3%B3digo.ipynb) (Colab) | `esquema_powershift.sql`, `telemetria_15min.csv`, `programacion.csv`, `costos_diarios.csv`, `PMLHorarioMDA.csv` | esquema, carga y consultas en PostgreSQL con TimescaleDB |
 
-El notebook 01 necesita una base PostgreSQL con TimescaleDB. La forma más simple es Docker:
+**Notebook 01 (bases de datos).** Está pensado para Google Colab: la sección 0 instala PostgreSQL 16 con TimescaleDB dentro de la propia sesión, así que no hace falta Docker. Al correrlo pide subir cinco archivos; los archivos subidos se borran cuando Colab se desconecta. La contraseña que aparece en el notebook es solo para esa base temporal de la sesión. Si se prefiere una base local, funciona igual con cualquier PostgreSQL con TimescaleDB cambiando los parámetros de conexión.
 
-```
-docker run -d --name powershift-db -p 5432:5432 -e POSTGRES_PASSWORD=powershift timescale/timescaledb:latest-pg16
-```
+Dónde están en este repositorio los cinco archivos que pide el notebook 01:
 
-Las contraseñas del notebook son solo para esa instancia local de prueba.
+| Archivo | Ubicación |
+|---|---|
+| `esquema_powershift.sql` | [`codigo/SQL/`](codigo/SQL) |
+| `telemetria_15min.csv` | [`codigo/Notebook 00/`](codigo/Notebook%2000) |
+| `programacion.csv` | [`codigo/Notebook 04/`](codigo/Notebook%2004) |
+| `costos_diarios.csv` | [`codigo/Notebook 04/`](codigo/Notebook%2004) |
+| `PMLHorarioMDA.csv` | [`codigo/`](codigo) |
+
+## Reportes
+
+La carpeta [`reportes/`](reportes) contiene los tres reportes del proyecto en PDF:
+
+- **Machine Learning e Inferencia Bayesiana y Matemáticas Aplicadas a la Ciencia de Datos:** clasificación de las horas en que carga el vehículo eléctrico, comparación de seis modelos, desarrollo matemático e implicación para el optimizador.
+- **Probabilidad y Estadística II:** tres pruebas de hipótesis (t pareada, ANOVA y bondad de ajuste χ²) y análisis de errores Tipo I y II.
+- **Bases de Datos:** fuentes, diccionario de datos, modelo relacional y cardinalidad, arquitectura del dato e implementación en PostgreSQL con TimescaleDB.
 
 ## Resultados principales
 
@@ -78,7 +103,7 @@ Todas las cifras salen de los notebooks de este repositorio.
 - **Machine Learning (notebook 02).** Clasificación de "el EV está cargando en esta hora" con información del día anterior, partición cronológica (prueba: 14 oct 2016 a 5 mar 2017). Modelo final: regresión logística, AUC 0.852, AP 0.377 (3.2 veces la tasa base), Brier 0.0872. Se compararon seis clasificadores; en la prueba quedan muy cerca. El 83 % de la energía del EV se carga entre las 10:00 y las 17:00 h.
 - **Optimizador (notebook 04).** Programación lineal que reparte la carga del EV en las horas permitidas. Con la ventana fija de 18:00 a 08:00 h, el ahorro simulado es de 2.23 MXN por día (20.2 % del costo de EV y bomba de calor; 54.3 % del costo del EV) en 268 días. Con ventanas aprendidas del hábito, evaluadas en 83 días de prueba, el ahorro es prácticamente el mismo (53.8 % contra 53.5 % del costo del EV), con una cobertura de 94 a 98 % de la energía real dentro de la ventana, contra 4.4 % de la ventana nocturna.
 - **Estadística (notebook 06).** Prueba t pareada del ahorro (t = 7.99, p = 4.1e-9), ANOVA de la bomba de calor por franja (p = 0.445) y bondad de ajuste χ² de la carga nocturna (se rechaza normalidad, p = 0.0058). Las funciones de densidad se programaron a mano, sin `scipy.stats`.
-- **Bases de datos (notebook 01).** Modelo de seis tablas (`nodo`, `vivienda`, `telemetria_consumo`, `tarifa_pml`, `dispositivo`, `programacion`) con `telemetria_consumo` como hypertable de TimescaleDB, y un join temporal por hora y nodo entre telemetría y tarifas. Ver el reporte de Bases de Datos.
+- **Bases de datos (notebook 01).** Modelo de seis tablas (`nodo`, `vivienda`, `telemetria_consumo`, `tarifa_pml`, `dispositivo`, `programacion`) en PostgreSQL 16 con TimescaleDB 2.31.0. `telemetria_consumo` (48,576 lecturas) es una hypertable de 18 chunks; la compresión la reduce de 11.3 MB a 2.0 MB (82.6 %). El join temporal por hora y nodo entre telemetría y tarifas reproduce los costos del notebook 04 con una diferencia máxima de 1.1e-4 MXN.
 
 ## Limitaciones
 
