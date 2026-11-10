@@ -45,6 +45,9 @@ Tras la limpieza quedan **506 días completos** (14 oct 2015 a 5 mar 2017), 12,1
 │   │   ├── pml_perfil.csv
 │   │   ├── telemetria_15min.csv
 │   │   └── fig_pml_perfil.pdf
+│   ├── Notebook 02/                             (salidas de referencia del notebook 02)
+│   │   ├── resultados_ml.json
+│   │   └── fig_ml_*.png
 │   ├── Notebook 04/                             (salidas de referencia del notebook 04)
 │   │   ├── costos_diarios.csv
 │   │   ├── costos_ventana_aprendida.csv
@@ -53,6 +56,9 @@ Tras la limpieza quedan **506 días completos** (14 oct 2015 a 5 mar 2017), 12,1
 │   │   ├── fig_asignacion_ev.(pdf/png)
 │   │   ├── fig_asignacion_ventana.(pdf/png)
 │   │   └── datos_horarios.csv · pml_perfil.csv  (copias de las entradas)
+│   ├── Notebook 06/                             (salidas de referencia del notebook 06)
+│   │   ├── resultados_estadistica.json
+│   │   └── fig_t.png · fig_anova.png · fig_normal.png
 │   └── SQL/
 │       ├── esquema_powershift.sql
 │       └── consultas_powershift.sql
@@ -62,7 +68,7 @@ Tras la limpieza quedan **506 días completos** (14 oct 2015 a 5 mar 2017), 12,1
 
 La numeración de los notebooks sigue el plan original del proyecto; los números 03 y 05 no se utilizaron.
 
-Las carpetas `Notebook 00/` y `Notebook 04/` guardan una copia de los archivos que generó una ejecución de esos notebooks, para poder consultarlos sin volver a correr nada. Los notebooks, al ejecutarse, leen y escriben archivos en **su propia carpeta** (`codigo/`).
+Las carpetas `Notebook 00/`, `Notebook 02/`, `Notebook 04/` y `Notebook 06/` guardan una copia de los archivos que generó una ejecución de esos notebooks, para poder consultarlos sin volver a correr nada. Los notebooks, al ejecutarse, leen y escriben archivos en **su propia carpeta** (`codigo/`).
 
 ## Cómo reproducirlo
 
@@ -72,8 +78,8 @@ Requiere Python 3.10 o superior: `pip install -r requirements.txt`. Se puede cor
 |---|---|---|---|
 | 1 | [`00_ingesta_limpieza_codigo`](codigo/00_ingesta_limpieza_codigo.ipynb) | `household_data_15min_singleindex.csv`, `PMLHorarioMDA.csv` | `datos_horarios.csv`, `pml_perfil.csv`, `telemetria_15min.csv` |
 | 2 | [`04_Optimizador_lp_codigo`](codigo/04_Optimizador_lp_codigo.ipynb) | `datos_horarios.csv`, `pml_perfil.csv` | `costos_diarios.csv`, `programacion.csv`, `costos_ventana_aprendida.csv`, `resultados_optimizador.json` y figuras |
-| 3 | [`02_ml_clasificacion_ev`](codigo/02_ml_clasificacion_ev.ipynb) | `datos_horarios.csv` | `resultados_ml.json` y figuras (se generan al ejecutarlo) |
-| 4 | [`06_inferencia_estadistica_codigo`](codigo/06_inferencia_estadistica_codigo.ipynb) | `datos_horarios.csv`, `costos_diarios.csv` | pruebas de hipótesis y figuras (se generan al ejecutarlo) |
+| 3 | [`02_ml_clasificacion_ev`](codigo/02_ml_clasificacion_ev.ipynb) | `datos_horarios.csv` | `resultados_ml.json` y figuras (copia en `Notebook 02/`) |
+| 4 | [`06_inferencia_estadistica_codigo`](codigo/06_inferencia_estadistica_codigo.ipynb) | `datos_horarios.csv`, `costos_diarios.csv` | `resultados_estadistica.json` y figuras (copia en `Notebook 06/`) |
 | 5 | [`01_Bases_de_datos_Código`](codigo/01_Bases_de_datos_C%C3%B3digo.ipynb) (Colab) | `esquema_powershift.sql`, `telemetria_15min.csv`, `programacion.csv`, `costos_diarios.csv`, `PMLHorarioMDA.csv` | esquema, carga y consultas en PostgreSQL con TimescaleDB |
 
 **Notebook 01 (bases de datos).** Está pensado para Google Colab: la sección 0 instala PostgreSQL 16 con TimescaleDB dentro de la propia sesión, así que no hace falta Docker. Al correrlo pide subir cinco archivos; los archivos subidos se borran cuando Colab se desconecta. La contraseña que aparece en el notebook es solo para esa base temporal de la sesión. Si se prefiere una base local, funciona igual con cualquier PostgreSQL con TimescaleDB cambiando los parámetros de conexión.
